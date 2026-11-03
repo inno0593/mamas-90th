@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mama's 90th</title>
+  <meta name="description" content="Mama is turning 90! Family outing in Tagaytay, Feb 21–23, and the birthday celebration in Metro Manila, Feb 25, 2027. Sign up for travel and lodging here.">
+  <!-- Everyone's travel details are visible on this page, so keep it out of search engines. -->
+  <meta name="robots" content="noindex, nofollow">
+  <meta property="og:title" content="Mama's 90th">
+  <meta property="og:description" content="Tagaytay family outing Feb 21–23 · Birthday celebration Feb 25, 2027. Add your travel & lodging plans.">
+  <meta name="theme-color" content="#14302a">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2314302a'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='32' font-style='italic' text-anchor='middle' fill='%23e3bd6a'%3E90%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+  <script src="config.js"></script>
+  <script src="assets/app.js" defer></script>
+</head>
+<body>
+  <header class="nav" id="top">
+    <div class="wrap nav__inner">
+      <a class="brand" href="#top"><span class="brand__mark">90</span><span>Mama's 90th</span></a>
+      <nav class="nav__links" aria-label="Sections">
+        <a href="#details">Details</a>
+        <a href="#signup">Sign-up</a>
+        <a href="#faq">Good to know</a>
+      </nav>
+      <button class="btn btn--gold btn--sm" type="button" data-action="my-info">Add my plans</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero__glow" aria-hidden="true"></div>
+      <div class="wrap hero__inner">
+        <p class="eyebrow">February 2027 · Philippines</p>
+        <h1 class="hero__title">
+          <span class="hero__pre">Mama is turning</span>
+          <span class="hero__num">90</span>
+        </h1>
+        <p class="hero__lede">Ninety years of love, laughter and lola wisdom. The whole family is coming home to celebrate: a weekend together in Tagaytay, then the big birthday in Metro Manila.</p>
+        <div class="hero__cta">
+          <a class="btn btn--gold" href="#signup">Add your travel &amp; lodging</a>
+          <a class="btn btn--ghost" href="#details">See the plan</a>
+        </div>
+        <div class="countdown" id="countdown" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="section" id="details">
+      <div class="wrap">
+        <p class="kicker">The celebration</p>
+        <h2 class="h2">Two gatherings, one very special week</h2>
+
+        <div class="events">
+          <article class="event">
+            <div class="event__date"><span>Feb</span><strong>21–23</strong><span>Sun – Tue</span></div>
+            <div class="event__body">
+              <h3>Tagaytay family outing</h3>
+              <p>Three days up in the cool air of Tagaytay with the whole family. Most of us stay at the big house, with Hillcreek as overflow.</p>
+              <p class="soon"><span class="dot"></span>Itinerary and room assignments coming soon</p>
+            </div>
+          </article>
+          <article class="event event--feature">
+            <div class="event__date"><span>Feb</span><strong>25</strong><span>Thursday</span></div>
+            <div class="event__body">
+              <h3>Mama's 90th birthday</h3>
+              <p>The main event in Metro Manila. Come ready to eat, sing and make Mama feel like the queen she is.</p>
+              <p class="soon"><span class="dot"></span>Venue, time and program coming soon</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="week" aria-label="The week at a glance">
+          <h3 class="h3">The week at a glance · February 2027</h3>
+          <ol class="week__days" id="week"></ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--tint" id="signup">
+      <div class="wrap">
+        <p class="kicker">Travel &amp; lodging sign-up</p>
+        <h2 class="h2">Find your name and add your plans</h2>
+        <p class="lede">One entry per person, kids included. Parents can fill in for their kids. Tap a name to add or update arrival, departure and where you'll sleep each night. Change it anytime your plans change.</p>
+
+        <div class="stats" id="stats" aria-live="polite"></div>
+
+        <div class="toolbar">
+          <label class="search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <span class="sr-only">Find your name</span>
+            <input type="search" id="search" placeholder="Find your name" autocomplete="off">
+          </label>
+          <div class="tabs" role="tablist" aria-label="View">
+            <button role="tab" type="button" class="tab" data-view="people" aria-selected="true">People</button>
+            <button role="tab" type="button" class="tab" data-view="nights" aria-selected="false">Nights</button>
+            <button role="tab" type="button" class="tab" data-view="flights" aria-selected="false">Flights</button>
+          </div>
+          <button class="btn btn--dark" type="button" data-action="add">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add someone
+          </button>
+        </div>
+
+        <div id="board" class="board" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <div class="wrap faq">
+        <div>
+          <p class="kicker">Good to know</p>
+          <h2 class="h2">Before you fill it in</h2>
+        </div>
+        <dl class="faq__list">
+          <div><dt>Who fills this in?</dt><dd>Everyone gets their own entry, kids included. One person can fill in for the whole family.</dd></div>
+          <div><dt>Which dates do I use?</dt><dd>Your overall Philippines arrival and departure, not just the Tagaytay dates.</dd></div>
+          <div><dt>Where I'll sleep each night</dt><dd>Pick where you expect to sleep each night from Feb 19 to 27. If you're staying before or after that, add it under "Other dates / needs".</dd></div>
+          <div><dt>How many fit in the house?</dt><dd>20–24 overnight guests in total, so a spot isn't guaranteed. Hillcreek is overflow lodging, with rooms subject to availability and confirmation.</dd></div>
+          <div><dt>My plans changed</dt><dd>Just tap your name again and update it. The latest version is what counts.</dd></div>
+          <div><dt>Privacy</dt><dd>Everything here is visible to anyone with the link. Please don't enter passport numbers or other sensitive details.</dd></div>
+        </dl>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer__inner">
+      <span class="brand__mark">90</span>
+      <p>Made with love for Mama · February 2027</p>
+    </div>
+  </footer>
+
+  <dialog class="sheet" id="editor" aria-labelledby="editor-title">
+    <form id="form" novalidate>
+      <header class="sheet__head">
+        <div>
+          <p class="kicker kicker--sm" id="editor-kicker">Travel &amp; lodging</p>
+          <h2 id="editor-title">Your plans</h2>
+        </div>
+        <button class="icon-btn" type="button" data-action="close" aria-label="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </header>
+
+      <div class="sheet__body">
+        <fieldset class="group">
+          <legend>Who</legend>
+          <div class="grid2">
+            <label class="field">
+              <span>Full name <em>*</em></span>
+              <input name="name" required maxlength="80" autocomplete="name">
+            </label>
+            <label class="field">
+              <span>Contact person</span>
+              <input name="contact" maxlength="80" placeholder="Who to reach for this person">
+            </label>
+          </div>
+          <label class="field field--copy">
+            <span>Same plans as someone else?</span>
+            <select id="copy-from"><option value="">Copy dates &amp; lodging from…</option></select>
+          </label>
+        </fieldset>
+
+        <fieldset class="group">
+          <legend>Coming?</legend>
+          <div class="rsvp">
+            <div class="rsvp__item">
+              <p class="rsvp__label">Tagaytay family outing <small>Feb 21–23</small></p>
+              <div class="seg" role="radiogroup" aria-label="Attending Tagaytay">
+                <label><input type="radio" name="tagaytay" value="Yes"><span>Yes</span></label>
+                <label><input type="radio" name="tagaytay" value="Maybe"><span>Maybe</span></label>
+                <label><input type="radio" name="tagaytay" value="No"><span>No</span></label>
+              </div>
+            </div>
+            <div class="rsvp__item">
+              <p class="rsvp__label">Mama's birthday <small>Feb 25 · Metro Manila</small></p>
+              <div class="seg" role="radiogroup" aria-label="Attending Feb 25">
+                <label><input type="radio" name="feb25" value="Yes"><span>Yes</span></label>
+                <label><input type="radio" name="feb25" value="Maybe"><span>Maybe</span></label>
+                <label><input type="radio" name="feb25" value="No"><span>No</span></label>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="group">
+          <legend>Travel</legend>
+          <label class="check">
+            <input type="checkbox" id="local">
+            <span>Already in the Philippines, no flights to add</span>
+          </label>
+          <div id="travel-fields">
+            <p class="hint">Use your overall Philippines dates, not just Tagaytay. Leave anything you don't know yet blank.</p>
+            <div class="leg">
+              <p class="leg__title">Arriving</p>
+              <div class="grid3">
+                <label class="field"><span>Date (PH)</span><input type="date" name="arrDate"></label>
+                <label class="field"><span>Time</span><input type="time" name="arrTime"></label>
+                <label class="field"><span>Flight / from</span><input name="arrFlight" maxlength="120" placeholder="e.g. PR103 from LAX"></label>
+              </div>
+            </div>
+            <div class="leg">
+              <p class="leg__title">Leaving</p>
+              <div class="grid3">
+                <label class="field"><span>Date (PH)</span><input type="date" name="depDate"></label>
+                <label class="field"><span>Time</span><input type="time" name="depTime"></label>
+                <label class="field"><span>Flight / to</span><input name="depFlight" maxlength="120" placeholder="e.g. PR102 to LAX"></label>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="group">
+          <legend>Where you'll sleep</legend>
+          <p class="hint">Pick where you expect to sleep each night. The house fits 20–24 overnight guests, so spots aren't guaranteed.</p>
+          <label class="field field--all">
+            <span>Same every night?</span>
+            <select id="set-all"><option value="">Set all nights to…</option></select>
+          </label>
+          <div class="nights" id="nights"></div>
+        </fieldset>
+
+        <fieldset class="group">
+          <legend>Anything else</legend>
+          <div class="grid2">
+            <label class="field"><span>Room sharing with</span><input name="roomSharing" maxlength="200"></label>
+            <label class="field"><span>Bed / room preference</span><input name="bedPref" maxlength="200"></label>
+          </div>
+          <label class="field"><span>Other dates / needs</span><textarea name="otherNeeds" rows="2" maxlength="500" placeholder="Staying before Feb 19 or after Feb 27? Tell us here."></textarea></label>
+          <label class="field"><span>Accessibility / notes</span><textarea name="notes" rows="2" maxlength="500"></textarea></label>
+          <p class="hint hint--warn">Visible to anyone with the link. No passport numbers or sensitive details, please.</p>
+        </fieldset>
+      </div>
+
+      <footer class="sheet__foot">
+        <p class="form-error" id="form-error" role="alert"></p>
+        <button class="btn btn--line" type="button" data-action="close">Cancel</button>
+        <button class="btn btn--dark" type="submit" id="save">Save plans</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
