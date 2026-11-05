@@ -1,0 +1,65 @@
+<!doctype html>
+<!-- Source for assets/og-image.png, the link-preview image (iMessage, WhatsApp, etc.).
+     Re-render after editing: see "Link preview image" in README.md. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --forest: #14302a; --gold: #c99a3e; --gold-2: #e3bd6a; --cream: #f5ecdc; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; }
+    body {
+      position: relative; background: var(--forest); color: var(--cream); font-family: "Manrope", sans-serif;
+      background-image:
+        radial-gradient(55% 75% at 30% 40%, rgba(227, 189, 106, .20), transparent 70%),
+        radial-gradient(45% 60% at 100% 100%, rgba(42, 133, 132, .28), transparent 70%),
+        radial-gradient(2px 2px at 8% 18%, rgba(246, 228, 181, .8) 50%, transparent 51%),
+        radial-gradient(1.6px 1.6px at 46% 10%, rgba(246, 228, 181, .7) 50%, transparent 51%),
+        radial-gradient(2.2px 2.2px at 93% 14%, rgba(246, 228, 181, .8) 50%, transparent 51%),
+        radial-gradient(1.6px 1.6px at 60% 88%, rgba(246, 228, 181, .6) 50%, transparent 51%),
+        radial-gradient(1.8px 1.8px at 4% 82%, rgba(246, 228, 181, .6) 50%, transparent 51%),
+        radial-gradient(1.4px 1.4px at 52% 52%, rgba(246, 228, 181, .5) 50%, transparent 51%);
+    }
+    .frame { position: absolute; inset: 22px; border: 1.5px solid rgba(227, 189, 106, .28); border-radius: 26px; }
+    .card { position: absolute; inset: 0; display: grid; grid-template-columns: 560px 1fr; align-items: center; padding: 0 72px 0 76px; gap: 40px; }
+    .eyebrow { margin: 0 0 6px; font-size: 21px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: var(--gold-2); }
+    .pre { margin: 0; font: italic 300 66px/1 "Fraunces", serif; letter-spacing: -.01em; }
+    .num {
+      display: block; margin: -8px 0 0 -14px; font: italic 600 350px/.86 "Fraunces", serif; letter-spacing: -.05em;
+      background: linear-gradient(170deg, #fff4d4 0%, var(--gold-2) 38%, var(--gold) 64%, #9a7022 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      filter: drop-shadow(0 14px 44px rgba(227, 189, 106, .3));
+    }
+    .events { display: grid; gap: 18px; }
+    .event { display: grid; grid-template-columns: 132px 1fr; align-items: center; gap: 22px; padding: 18px 22px; border-radius: 22px; background: rgba(255, 255, 255, .06); border: 1.5px solid rgba(255, 255, 255, .1); }
+    .date { display: grid; justify-items: center; padding: 12px 0 10px; border-radius: 16px; background: rgba(0, 0, 0, .22); }
+    .date small { font-size: 15px; font-weight: 800; letter-spacing: .14em; color: rgba(245, 236, 220, .7); }
+    .date strong { font: italic 600 40px/1.05 "Fraunces", serif; color: var(--gold-2); white-space: nowrap; }
+    .what { font: 500 31px/1.15 "Fraunces", serif; letter-spacing: -.01em; }
+    .what span { display: block; margin-top: 6px; font: 700 19px/1.2 "Manrope", sans-serif; color: rgba(245, 236, 220, .7); }
+    .cta { justify-self: start; margin-top: 8px; padding: 16px 28px; border-radius: 999px; font-size: 23px; font-weight: 800; color: #24190c; background: linear-gradient(180deg, var(--gold-2), var(--gold)); box-shadow: 0 10px 30px -10px rgba(201, 154, 62, .9); }
+  </style>
+</head>
+<body>
+  <div class="frame"></div>
+  <div class="card">
+    <div>
+      <p class="eyebrow">February 2027 · Philippines</p>
+      <p class="pre">Mama is turning</p>
+      <span class="num">90</span>
+    </div>
+    <div class="events">
+      <div class="event">
+        <div class="date"><small>FEB</small><strong>21–23</strong></div>
+        <div class="what">Tagaytay family outing<span>Sun – Tue · the whole family</span></div>
+      </div>
+      <div class="event">
+        <div class="date"><small>FEB</small><strong>25</strong></div>
+        <div class="what">Mama's 90th birthday<span>Thursday · Metro Manila</span></div>
+      </div>
+      <div class="cta">Add your travel &amp; lodging →</div>
+    </div>
+  </div>
+</body>
+</html>

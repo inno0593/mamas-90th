@@ -31,6 +31,16 @@ node dev/server.mjs
 
 That opens http://localhost:8090. It runs the real `backend/Code.gs` against an in-memory fake sheet, seeded from `backend/Seed.gs`.
 
+## Link preview image
+
+`assets/og-image.png` is the picture shown when the link is shared in iMessage and other chats. Its design lives in `dev/og-image.html`. After editing that file, re-render it:
+
+```bash
+"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --hide-scrollbars --force-device-scale-factor=1 --window-size=1200,630 --virtual-time-budget=8000 --screenshot="$PWD/assets/og-image.png" "file://$PWD/dev/og-image.html"
+```
+
+Chats cache previews, so a link that was already sent keeps its old preview. A link shared for the first time picks up the new one, and adding something like `?v=2` to the end makes it count as new.
+
 ## Adding event details
 
 The event info lives in `index.html` under `<section id="details">`. The lodging choices and event nights are at the top of `assets/app.js`. The lodging list must match `LODGING` in `backend/Code.gs`.
