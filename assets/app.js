@@ -100,13 +100,7 @@
     }
   }
 
-  async function list() {
-    const data = await request({ action: 'list' });
-    // TEMPORARY: the backend deployed before the password existed only lists over GET.
-    // Remove once the new backend/Code.gs is deployed.
-    if (data.error === 'unknown_action') return (await fetch(`${API}?t=${Date.now()}`, { cache: 'no-store' })).json();
-    return data;
-  }
+  const list = () => request({ action: 'list' });
 
   function setPeople(people) {
     state.people = people;
