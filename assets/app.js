@@ -20,19 +20,27 @@
   const AVATAR_COLORS = ['#1d4339', '#3c5ba3', '#2a8584', '#7a4f9e', '#a24d3c', '#9a6b14', '#2f6b4f', '#5b4b8a'];
 
   const isLocalDev = ['localhost', '127.0.0.1'].includes(location.hostname);
-  const API = (window.SITE_CONFIG && window.SITE_CONFIG.apiUrl) || (isLocalDev ? '/api' : '');
+  // Local preview always uses the dev server's fake sheet, never the real one.
+  const API = isLocalDev ? '/api' : (window.SITE_CONFIG && window.SITE_CONFIG.apiUrl) || '';
+  const PASSWORD_KEY = 'm90-password'; // also read by the inline script in index.html
+  const AUTH_ERRORS = ['wrong_password', 'too_many_tries', 'password_not_set'];
 
   const state = { people: [], status: API ? 'loading' : 'closed', view: 'people', query: '', loadedAt: 0 };
   let editing = null;
   let dirty = false;
+  let password = stored(() => localStorage.getItem(PASSWORD_KEY)) || '';
 
   const $ = (sel, el = document) => el.querySelector(sel);
   const $$ = (sel, el = document) => [...el.querySelectorAll(sel)];
   const board = $('#board');
   const dialog = $('#editor');
   const form = $('#form');
+  const gate = $('#gate');
+  const gateInput = $('#gate-password');
 
   // ---------- helpers ----------
+  // localStorage can be missing or throw (private windows, blocked storage).
+  function stored(fn) { try { return fn(); } catch { return null; } }
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const lodging = (v) => LODGING.find((l) => l.value === v);
   const fold = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
@@ -79,32 +87,117 @@
   }
 
   // ---------- data ----------
-  async function request(options) {
+  // Every call is a POST with the password in the body. A plain string body is sent as
+  // text/plain, which keeps the browser from sending a CORS preflight Apps Script can't answer.
+  async function request(body) {
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), 25000);
     try {
-      const url = options ? API : `${API}${API.includes('?') ? '&' : '?'}action=list&t=${Date.now()}`;
-      const res = await fetch(url, { cache: 'no-store', signal: ctrl.signal, ...options });
+      const res = await fetch(API, { method: 'POST', body: JSON.stringify({ ...body, password }), cache: 'no-store', signal: ctrl.signal });
       return await res.json();
     } finally {
       clearTimeout(timer);
     }
   }
 
+  async function list() {
+    const data = await request({ action: 'list' });
+    // TEMPORARY: the backend deployed before the password existed only lists over GET.
+    // Remove once the new backend/Code.gs is deployed.
+    if (data.error === 'unknown_action') return (await fetch(`${API}?t=${Date.now()}`, { cache: 'no-store' })).json();
+    return data;
+  }
+
+  function setPeople(people) {
+    state.people = people;
+    state.status = 'ready';
+    state.loadedAt = Date.now();
+  }
+
   async function load({ quiet = false } = {}) {
     if (!API) return render();
     if (!quiet) { state.status = 'loading'; render(); }
     try {
-      const data = await request();
+      const data = await list();
+      if (!data.ok && AUTH_ERRORS.includes(data.error)) return lock(data.error === 'wrong_password' ? 'again' : data.error);
       if (!data.ok) throw new Error(data.error || 'load_failed');
-      state.people = data.people;
-      state.status = 'ready';
-      state.loadedAt = Date.now();
+      setPeople(data.people);
     } catch (err) {
       console.error(err);
       if (!quiet || state.status !== 'ready') state.status = 'error';
     }
     render();
+  }
+
+  // ---------- password screen ----------
+  const GATE_MESSAGES = {
+    again: 'Please enter the family password again.',
+    wrong_password: "That's not it. Check the spelling and try again.",
+    too_many_tries: 'Too many wrong tries. Wait 10 minutes, then try again.',
+    password_not_set: "The password hasn't been set up yet. Please try again later.",
+    offline: "Couldn't connect. Check your internet and try again.",
+    failed: 'Something went wrong. Please try again.',
+  };
+
+  function setGateError(reason) {
+    $('#gate-error').textContent = GATE_MESSAGES[reason] || '';
+    if (reason === 'wrong_password') gateInput.setAttribute('aria-invalid', 'true');
+    else gateInput.removeAttribute('aria-invalid');
+    if (reason === 'wrong_password' && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const card = $('.gate__card', gate);
+      card.classList.remove('is-wrong');
+      void card.offsetWidth; // restart the shake
+      card.classList.add('is-wrong');
+    }
+  }
+
+  function lock(reason) {
+    password = '';
+    // Only forget a saved password that was actually wrong, not one blocked by the lockout.
+    if (reason === 'again') stored(() => localStorage.removeItem(PASSWORD_KEY));
+    state.people = [];
+    state.status = 'loading';
+    document.documentElement.classList.add('is-locked');
+    setGateError(reason);
+    // Skip autofocus on phones so the keyboard doesn't cover the screen straight away.
+    if (matchMedia('(hover: hover)').matches) gateInput.focus();
+  }
+
+  function unlock() {
+    document.documentElement.classList.remove('is-locked');
+    window.scrollTo(0, 0);
+    render();
+  }
+
+  async function enter(e) {
+    e.preventDefault();
+    const value = gateInput.value.trim();
+    if (!value) { setGateError(''); gateInput.focus(); return; }
+    const btn = $('#gate-submit');
+    btn.disabled = true;
+    btn.textContent = 'Checking…';
+    password = value;
+    try {
+      const data = await list();
+      if (data.ok) {
+        stored(() => localStorage.setItem(PASSWORD_KEY, value));
+        setPeople(data.people);
+        gateInput.value = '';
+        setGateError('');
+        unlock();
+      } else {
+        password = '';
+        setGateError(AUTH_ERRORS.includes(data.error) ? data.error : 'failed');
+        gateInput.select();
+      }
+    } catch (err) {
+      console.error(err);
+      password = '';
+      setGateError('offline');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Come in';
+    }
   }
 
   // ---------- rendering ----------
@@ -389,11 +482,9 @@
     // `base` lets the backend refuse the save if someone changed this person since we loaded them.
     const payload = { action: 'save', person: { ...person, id: editing ? editing.id : '' }, base: editing || undefined };
     try {
-      const r = await request({ method: 'POST', body: JSON.stringify(payload) });
+      const r = await request(payload);
       if (r.ok) {
-        state.people = r.people;
-        state.loadedAt = Date.now();
-        state.status = 'ready';
+        setPeople(r.people);
         closeEditor(true);
         render();
         toast(`Saved! Thanks, ${firstName(r.person.name)} 🎉`);
@@ -407,6 +498,11 @@
         dirty = false;
         render();
         err.textContent = 'Someone else just updated this entry, so we loaded their version. Make your changes again and save.';
+      } else if (AUTH_ERRORS.includes(r.error)) {
+        // The password was changed while this page was open. Keep their edits on screen.
+        err.textContent = r.error === 'too_many_tries'
+          ? "Couldn't save: too many wrong passwords were tried just now. Wait 10 minutes and save again."
+          : "Couldn't save: the family password has changed. Copy anything you typed, then reload the page.";
       } else {
         err.textContent = r.error === 'name_required' ? 'Please add a name.' : "Couldn't save. Please try again.";
       }
@@ -488,6 +584,15 @@
   $('#search').addEventListener('input', (e) => { state.query = e.target.value; renderBoard(); });
 
   form.addEventListener('submit', save);
+  $('#gate-form').addEventListener('submit', enter);
+  $('#gate-show').addEventListener('click', (e) => {
+    const show = gateInput.type === 'password';
+    gateInput.type = show ? 'text' : 'password';
+    e.currentTarget.textContent = show ? 'Hide' : 'Show';
+    e.currentTarget.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+    gateInput.focus();
+  });
+  gateInput.addEventListener('input', () => { if (gateInput.hasAttribute('aria-invalid')) setGateError(''); });
   form.addEventListener('input', () => { dirty = true; });
   form.addEventListener('change', (e) => {
     dirty = true;
@@ -528,5 +633,6 @@
   renderWeek();
   renderCountdown();
   setInterval(renderCountdown, 1000);
-  load();
+  if (API && !password) lock('');
+  else { document.documentElement.classList.remove('is-locked'); load(); }
 })();

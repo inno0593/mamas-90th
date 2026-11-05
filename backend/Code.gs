@@ -2,9 +2,13 @@
  * Backend for the Mama's 90th site.
  *
  * Lives in a Google Sheet's Apps Script project and is deployed as a web app
- * (Execute as: Me, Who has access: Anyone). The site reads everyone with GET
- * and saves one person at a time with POST. The first request creates the
- * "Sign-Up" and "Summary" tabs and loads SEED (from Seed.gs) if it exists.
+ * (Execute as: Me, Who has access: Anyone). Every request is a POST that carries
+ * the family password: {action: 'list'} reads everyone, {action: 'save'} saves
+ * one person. The first request creates the "Sign-Up" and "Summary" tabs and
+ * loads SEED (from Seed.gs) if it exists.
+ *
+ * The password is the SITE_PASSWORD script property (Project Settings → Script
+ * Properties), not part of this file, because this file is in a public repo.
  */
 
 var SHEET_NAME = 'Sign-Up';
@@ -12,6 +16,9 @@ var SUMMARY_NAME = 'Summary';
 var NIGHTS = ['19', '20', '21', '22', '23', '24', '25', '26', '27'];
 var ATTENDANCE = ['Yes', 'Maybe', 'No'];
 var LODGING = ['Tagaytay Big House', '73 Times', 'Hillcreek', 'QC hotel or other', 'Other / own', 'Need lodging', 'Not needed'];
+// Wrong passwords allowed per 10 minutes, counting every visitor together. Past
+// that, all requests are refused until 10 minutes pass with no wrong tries.
+var MAX_WRONG_TRIES = 30;
 
 // Column order matches the original spreadsheet, plus an ID column at the end.
 var FIELDS = [
@@ -38,11 +45,8 @@ var COL = {};
 KEYS.forEach(function (k, i) { COL[k] = i + 1; });
 
 function doGet(e) {
-  try {
-    return json_({ ok: true, people: readAll_(sheet_()) });
-  } catch (err) {
-    return json_({ ok: false, error: String(err) });
-  }
+  // Reads go through POST so the password never ends up in a URL.
+  return json_({ ok: false, error: 'wrong_password' });
 }
 
 function doPost(e) {
@@ -51,6 +55,16 @@ function doPost(e) {
     body = JSON.parse(e.postData.contents);
   } catch (err) {
     return json_({ ok: false, error: 'bad_request' });
+  }
+  var denied = checkPassword_(body.password);
+  if (denied) return json_({ ok: false, error: denied });
+
+  if (body.action === 'list') {
+    try {
+      return json_({ ok: true, people: readAll_(sheet_()) });
+    } catch (err) {
+      return json_({ ok: false, error: String(err) });
+    }
   }
   if (body.action !== 'save') return json_({ ok: false, error: 'unknown_action' });
 
@@ -82,6 +96,23 @@ function doPost(e) {
   } finally {
     lock.releaseLock();
   }
+}
+
+/** Returns '' if the password is right, otherwise the error to send back. */
+function checkPassword_(given) {
+  var want = PropertiesService.getScriptProperties().getProperty('SITE_PASSWORD');
+  if (!normalize_(want)) return 'password_not_set';
+  var cache = CacheService.getScriptCache();
+  var wrong = Number(cache.get('wrong_tries') || 0);
+  if (wrong >= MAX_WRONG_TRIES) return 'too_many_tries';
+  if (normalize_(given) === normalize_(want)) return '';
+  cache.put('wrong_tries', String(wrong + 1), 600);
+  return 'wrong_password';
+}
+
+/** Ignores case and spaces, so phones that capitalise the first letter still match. */
+function normalize_(s) {
+  return String(s == null ? '' : s).replace(/\s+/g, '').toLowerCase();
 }
 
 /** Run once from the editor if you want the tabs created before the first visit. */

@@ -1,5 +1,6 @@
 // Local preview: serves the site and runs backend/Code.gs against an in-memory
 // fake of the Google Sheets APIs it uses, at /api. Run: node dev/server.mjs
+// The password is "family" unless you set SITE_PASSWORD.
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -58,7 +59,17 @@ const validationBuilder = () => {
   return b;
 };
 const pad = (n) => String(n).padStart(2, '0');
+// The family password for local preview. SITE_PASSWORD= (empty) tests the "not set up yet" screen.
+const password = process.env.SITE_PASSWORD ?? 'family';
+const cache = new Map();
 const context = vm.createContext({
+  PropertiesService: { getScriptProperties: () => ({ getProperty: (k) => (k === 'SITE_PASSWORD' && password ? password : null) }) },
+  CacheService: {
+    getScriptCache: () => ({
+      get: (k) => { const e = cache.get(k); return e && e.until > Date.now() ? e.value : null; },
+      put: (k, value, seconds = 600) => { cache.set(k, { value: String(value), until: Date.now() + seconds * 1000 }); },
+    }),
+  },
   SpreadsheetApp: { getActiveSpreadsheet: () => spreadsheet, newDataValidation: validationBuilder },
   LockService: { getScriptLock: () => ({ waitLock() {}, releaseLock() {} }) },
   Utilities: {
@@ -107,4 +118,4 @@ http.createServer((req, res) => {
   }
   res.writeHead(200, { 'Content-Type': types[path.extname(file)] || 'application/octet-stream', 'Cache-Control': 'no-store' });
   fs.createReadStream(file).pipe(res);
-}).listen(port, () => console.log(`Preview: http://localhost:${port}`));
+}).listen(port, () => console.log(`Preview: http://localhost:${port} (password: ${password || 'not set'})`));

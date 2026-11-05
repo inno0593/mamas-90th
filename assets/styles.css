@@ -403,3 +403,39 @@ a { color: inherit; }
   .sheet[open], .skeleton { animation: none; }
   .confetti { display: none; }
 }
+
+/* Password screen. <html class="is-locked"> is set by the inline script in index.html and by app.js. */
+.gate { display: none; }
+.is-locked body { background: var(--forest); }
+.is-locked body > :not(.gate) { display: none !important; }
+.is-locked .gate {
+  position: relative; overflow: hidden; display: grid; place-items: center;
+  min-height: 100vh; min-height: 100dvh; padding: 40px 16px calc(40px + env(safe-area-inset-bottom));
+  background: var(--forest); color: #f5ecdc;
+}
+.gate__card { position: relative; display: grid; justify-items: center; gap: 18px; width: 100%; max-width: 460px; text-align: center; }
+.gate .hero__title { justify-items: center; }
+.gate .hero__num { font-size: clamp(130px, 40vw, 210px); margin-left: 0; }
+.gate .hero__pre { font-size: clamp(28px, 7vw, 40px); }
+.gate__lede { margin: 0; max-width: 24em; font-size: 17px; color: rgba(245, 236, 220, .82); }
+.gate__row { display: flex; flex-wrap: wrap; gap: 10px; width: 100%; margin-top: 4px; }
+.gate__row .btn { flex: 1 0 auto; min-height: 52px; font-size: 16px; }
+.gate__field { position: relative; flex: 1 1 240px; }
+.gate__field input {
+  width: 100%; height: 52px; padding: 0 70px 0 20px; border-radius: 999px;
+  border: 1px solid rgba(245, 236, 220, .3); background: rgba(255, 255, 255, .08); color: #fff;
+  font-size: 17px; outline: none; transition: border-color .15s, box-shadow .15s;
+}
+.gate__field input::placeholder { color: rgba(245, 236, 220, .55); }
+.gate__field input:focus { border-color: var(--gold-2); box-shadow: 0 0 0 3px rgba(227, 189, 106, .25); }
+.gate__field input[aria-invalid="true"] { border-color: #ff9d87; }
+.gate__show {
+  position: absolute; top: 6px; right: 6px; height: 40px; padding: 0 14px; border: 0; border-radius: 999px;
+  background: transparent; color: rgba(245, 236, 220, .75); font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.gate__show:hover { background: rgba(255, 255, 255, .08); color: #fff; }
+.gate__error { margin: 0; color: #ffb4a3; font-size: 15px; font-weight: 600; }
+.gate__error:empty { display: none; }
+.gate__help { margin: 0; font-size: 14px; color: rgba(245, 236, 220, .6); }
+.gate__card.is-wrong .gate__row { animation: shake .4s ease; }
+@keyframes shake { 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }

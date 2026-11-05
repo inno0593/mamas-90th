@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Mama's 90th</title>
   <meta name="description" content="Mama is turning 90! Family outing in Tagaytay, Feb 21–23, and the birthday celebration in Metro Manila, Feb 25, 2027. Sign up for travel and lodging here.">
-  <!-- Everyone's travel details are visible on this page, so keep it out of search engines. -->
+  <!-- The sign-up list sits behind the family password, but keep the page out of search engines anyway. -->
   <meta name="robots" content="noindex, nofollow">
   <!-- Link previews (iMessage, WhatsApp, Messenger). Image URLs must be absolute; source is dev/og-image.html. -->
   <meta property="og:type" content="website">
@@ -22,11 +22,39 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css">
+  <!-- Bump ?v= when these files change, so nobody gets a cached old file with the new page. -->
+  <link rel="stylesheet" href="assets/styles.css?v=2">
   <script src="config.js"></script>
-  <script src="assets/app.js" defer></script>
+  <script>
+    // Show the password screen before anything paints, unless this device already has the password.
+    try { if (!localStorage.getItem('m90-password')) document.documentElement.classList.add('is-locked'); }
+    catch (e) { document.documentElement.classList.add('is-locked'); }
+  </script>
+  <script src="assets/app.js?v=2" defer></script>
 </head>
 <body>
+  <div class="gate" id="gate">
+    <div class="hero__glow" aria-hidden="true"></div>
+    <form class="gate__card" id="gate-form" novalidate>
+      <p class="eyebrow">February 2027 · Philippines</p>
+      <h1 class="hero__title">
+        <span class="hero__pre">Mama is turning</span>
+        <span class="hero__num">90</span>
+      </h1>
+      <p class="gate__lede">This page is just for family. Enter the password to see the plans and add yours.</p>
+      <div class="gate__row">
+        <div class="gate__field">
+          <label class="sr-only" for="gate-password">Family password</label>
+          <input id="gate-password" name="password" type="password" placeholder="Family password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="go" aria-describedby="gate-error">
+          <button class="gate__show" id="gate-show" type="button" aria-label="Show password">Show</button>
+        </div>
+        <button class="btn btn--gold" id="gate-submit" type="submit">Come in</button>
+      </div>
+      <p class="gate__error" id="gate-error" role="alert"></p>
+      <p class="gate__help">Don't have it? Ask whoever sent you the link.</p>
+    </form>
+  </div>
+
   <header class="nav" id="top">
     <div class="wrap nav__inner">
       <a class="brand" href="#top"><span class="brand__mark">90</span><span>Mama's 90th</span></a>
@@ -128,7 +156,7 @@
           <div><dt>Where I'll sleep each night</dt><dd>Pick where you expect to sleep each night from Feb 19 to 27. If you're staying before or after that, add it under "Other dates / needs".</dd></div>
           <div><dt>How many fit in the house?</dt><dd>20–24 overnight guests in total, so a spot isn't guaranteed. Hillcreek is overflow lodging, with rooms subject to availability and confirmation.</dd></div>
           <div><dt>My plans changed</dt><dd>Just tap your name again and update it. The latest version is what counts.</dd></div>
-          <div><dt>Privacy</dt><dd>Everything here is visible to anyone with the link. Please don't enter passport numbers or other sensitive details.</dd></div>
+          <div><dt>Privacy</dt><dd>Everything here is visible to anyone in the family who has the password. Please don't enter passport numbers or other sensitive details.</dd></div>
         </dl>
       </div>
     </section>
